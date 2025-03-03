@@ -59,12 +59,11 @@ func loadConfig(configFileName string) (*Config, error) {
 }
 
 func main() {
-	config, err := loadConfig("config.json")
-	if err != nil {
-		fmt.Println("Error loading configuration", err)
-		os.Exit(1)
-	}
-	log := logger.NewLogger(config.LogFile)
-	log.Log("Testing this shit")
 
+	log := logger.NewLogger("server.log")
+
+	log.LogRequest("127.0.0.1", "GET /index.html HTTP/1.1", 200)
+	log.LogError("Test error message")
+
+	os.Exit(0)
 }
