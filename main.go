@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+
+	"go-another-http-web-server.git/logger"
 )
 
 type Config struct {
@@ -62,5 +64,7 @@ func main() {
 		fmt.Println("Error loading configuration", err)
 		os.Exit(1)
 	}
-	fmt.Printf("Configuration loaded successfully: \n%+v\n", *config)
+	log := logger.NewLogger(config.LogFile)
+	log.Log("Testing this shit")
+
 }
