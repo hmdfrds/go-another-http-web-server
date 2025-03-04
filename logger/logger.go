@@ -9,7 +9,7 @@ import (
 
 // Logger is a thread-safe logger for the server.
 type Logger struct {
-	LogFile           string
+	logFile           string
 	totalRequests     int
 	startTime         time.Time
 	activeConnections map[string]time.Time // e.g, map[clientIp]connectionStartTime
@@ -19,14 +19,14 @@ type Logger struct {
 // NewLogger initializes and returns a new Logger.
 func NewLogger(logFile string) *Logger {
 	return &Logger{
-		LogFile:           logFile,
+		logFile:           logFile,
 		startTime:         time.Now(),
 		activeConnections: make(map[string]time.Time),
 	}
 }
 
-// log writes a message to the log file with a timestamp.
-func (l *Logger) log(message string) {
+// Log writes a message to the log file with a timestamp.
+func (l *Logger) Log(message string) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
@@ -34,7 +34,7 @@ func (l *Logger) log(message string) {
 	logEntry := fmt.Sprintf("[%s] %s\n", timestamp, message)
 
 	// Open the log file for appending; create it if it doesn't exist.
-	f, err := os.OpenFile(l.LogFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, err := os.OpenFile(l.logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Println("Error opening log file:", err)
 		return
@@ -55,12 +55,12 @@ func (l *Logger) LogRequest(clientIP, requestLine string, responseCode int) {
 
 	message := fmt.Sprintf("REQUEST from %s: '%s' responded with %d", clientIP, requestLine, responseCode)
 
-	l.log(message)
+	l.Log(message)
 }
 
 // LogError logs an error message.
 func (l *Logger) LogError(errorMessage string) {
-	l.log(fmt.Sprintf("ERROR: %s", errorMessage))
+	l.Log(fmt.Sprintf("ERROR: %s", errorMessage))
 }
 
 // LogStats logs periodic server statictics.
@@ -73,7 +73,7 @@ func (l *Logger) LogStats() {
 
 	statsMessage := fmt.Sprintf("STATS: Total Requests: %d, Active Connections: %d, Uptime %.0f seconds", totalRequests, activeCount, uptime)
 
-	l.log(statsMessage)
+	l.Log(statsMessage)
 }
 
 // StartPeriodicStats starts a background goroutine to log stats periodically.
