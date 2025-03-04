@@ -3,22 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"go-another-http-web-server/handler"
+	"go-another-http-web-server/logger"
 	"net"
 	"os"
-
-	"go-another-http-web-server.git/logger"
 )
 
-type Config struct {
-	Host         string `json:"host"`
-	Port         int    `json:"port"`
-	AdminPort    int    `json:"admin_port"`
-	DocumentRoot string `json:"document_root"`
-	MaxThreads   int    `json:"max_threads"`
-	LogFile      string `json:"log_file"`
-}
-
-func loadConfig(configFileName string) (*Config, error) {
+func loadConfig(configFileName string) (*handler.Config, error) {
 	// Check if the file exists
 	if _, err := os.Stat(configFileName); os.IsNotExist(err) {
 		return nil, fmt.Errorf("configuration file %s not found", configFileName)
@@ -31,7 +22,7 @@ func loadConfig(configFileName string) (*Config, error) {
 	}
 
 	// Validate required fields
-	var config Config
+	var config handler.Config
 	if err := json.Unmarshal(data, &config); err != nil {
 		return nil, fmt.Errorf("error parsing config JSON: %v", err)
 	}
@@ -60,7 +51,7 @@ func loadConfig(configFileName string) (*Config, error) {
 }
 
 // startServer initializes the TCP listener and starts the accept loop.
-func startServer(config *Config, log *logger.Logger) {
+func startServer(config *handler.Config, log *logger.Logger) {
 	address := fmt.Sprintf("%s:%d", config.Host, config.Port)
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
@@ -83,7 +74,7 @@ func startServer(config *Config, log *logger.Logger) {
 }
 
 // handleConnection is a placeholder for processing client connections.
-func handleConnection(conn net.Conn, config *Config, log *logger.Logger) {
+func handleConnection(conn net.Conn, config *handler.Config, log *logger.Logger) {
 	defer conn.Close()
 
 	// For testing purposes, simply send back a basic HTTP response.
