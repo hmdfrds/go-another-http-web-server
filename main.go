@@ -69,25 +69,11 @@ func startServer(config *handler.Config, log *logger.Logger) {
 			continue
 		}
 		// For each connection, spawn a new goroutine to handle the request.
-		go handleConnection(conn, config, log)
+		go func(conn net.Conn) {
+			handler := handler.NewRequestHandler(conn, config, log)
+			handler.Handle()
+		}(conn)
 	}
-}
-
-// handleConnection is a placeholder for processing client connections.
-func handleConnection(conn net.Conn, config *handler.Config, log *logger.Logger) {
-	defer conn.Close()
-
-	// For testing purposes, simply send back a basic HTTP response.
-	response := "HTTP/1.1 200 OK\r\n" +
-		"Content-Type: text/plain\r\n" +
-		"Content-Length: 13\r\n" +
-		"\r\n" +
-		"Hello, World!"
-
-	conn.Write([]byte(response))
-
-	// Log the simple interaction.
-	log.LogRequest(conn.RemoteAddr().String(), "GET /", 200)
 }
 
 func main() {
