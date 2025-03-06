@@ -85,3 +85,23 @@ func (l *Logger) StartPeriodicStats(interval time.Duration) {
 		}
 	}()
 }
+
+// TotalRequests getter for totalRequests
+func (l *Logger) TotalRequests() int {
+	return l.totalRequests
+}
+
+// StartTime getter for startTime
+func (l *Logger) StartTime() time.Time {
+	return l.startTime
+}
+
+// ActiveConnections getter for activeConnections
+func (l *Logger) ActiveConnections() map[string]time.Time {
+	return l.activeConnections
+}
+
+// LogFile getter for logFile
+func (l *Logger) LogFile() string {
+	return l.logFile
+}

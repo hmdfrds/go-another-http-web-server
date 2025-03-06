@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"go-another-http-web-server/admin"
 	"go-another-http-web-server/handler"
 	"go-another-http-web-server/logger"
 	"net"
@@ -89,5 +90,11 @@ func main() {
 	log := logger.NewLogger(config.LogFile)
 	log.StartPeriodicStats(60 * 1e9)
 
-	startServer(config, log)
+	go startServer(config, log)
+
+	// Start the admin interface.
+	adminInterface := admin.NewAdminInterface(config.Host, config.AdminPort, log)
+	adminInterface.Start()
+
+	select {}
 }
